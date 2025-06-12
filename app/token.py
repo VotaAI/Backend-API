@@ -1,5 +1,6 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+import os
 
 # Chave secreta segura (gere uma forte com os.urandom ou secrets)
 SECRET_KEY = os.getenv("SECRET_KEY")
