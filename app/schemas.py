@@ -101,3 +101,11 @@ class LoginResponse(BaseModel):
     token_type: str
     user: UserBase
 
+
+class CandidaturaInfo(BaseModel):
+    id_candidatura: int
+    id_votacao: int
+    id_user: int
+    detalhes: Optional[str]
+    titulo: str
+    nome_completo: str 

@@ -115,16 +115,16 @@ def get_votos_votacao(db: Session, id_votacao):
 
 
 def get_candidaturas(db: Session, limit=10, offset=0):
-    return db.query(models.Candidatura).limit(limit).offset(offset).all()
+        return (db.query(models.Candidatura.id_candidatura,models.Candidatura.id_votacao, models.Candidatura.id_user, models.Candidatura.detalhes, models.User.nome_completo, models.Votacao.titulo,).join(models.User, models.Candidatura.id_user == models.User.id_user).join(models.Votacao, models.Candidatura.id_votacao == models.Votacao.id_votacao).all())
 
 def get_candidaturas_pendentes(db: Session, limit=10, offset=0):
-    return db.query(models.Candidatura).filter(models.Candidatura.status == 'pendente').limit(limit).offset(offset).all()
+        return (db.query(models.Candidatura.id_candidatura,models.Candidatura.id_votacao, models.Candidatura.id_user, models.Candidatura.detalhes, models.User.nome_completo, models.Votacao.titulo,).join(models.User, models.Candidatura.id_user == models.User.id_user).join(models.Votacao, models.Candidatura.id_votacao == models.Votacao.id_votacao).filter(models.Candidatura.status == "pendente").limit(limit).offset(offset).all())
 
 def get_candidaturas_aprovadas(db: Session, limit=10, offset=0):
-    return db.query(models.Candidatura).filter(models.Candidatura.status == 'aprovada').limit(limit).offset(offset).all()
+    return (db.query(models.Candidatura.id_candidatura,models.Candidatura.id_votacao, models.Candidatura.id_user, models.Candidatura.detalhes, models.User.nome_completo, models.Votacao.titulo,).join(models.User, models.Candidatura.id_user == models.User.id_user).join(models.Votacao, models.Candidatura.id_votacao == models.Votacao.id_votacao).filter(models.Candidatura.status == "aprovada").limit(limit).offset(offset).all())
 
 def get_candidaturas_recusadas(db: Session, limit=10, offset=0):
-    return db.query(models.Candidatura).filter(models.Candidatura.status == 'recusada').limit(limit).offset(offset).all()
+    return (db.query(models.Candidatura.id_candidatura,models.Candidatura.id_votacao, models.Candidatura.id_user, models.Candidatura.detalhes, models.User.nome_completo, models.Votacao.titulo,).join(models.User, models.Candidatura.id_user == models.User.id_user).join(models.Votacao, models.Candidatura.id_votacao == models.Votacao.id_votacao).filter(models.Candidatura.status == "recusada").limit(limit).offset(offset).all())
 
 
 

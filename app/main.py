@@ -50,23 +50,80 @@ def list_votacao_votos(db: Session = Depends(get_db), id_votacao=int):
 
 @app.get("/votacoes/{id_votacao}/opcoes")
 def list_votacao_opcoes(db: Session = Depends(get_db), id_votacao=int):
-    return crud.get_opcoes(db, id_votacao)
+    return crud.get_opcoes_id(db, id_votacao)
 
 @app.get("/candidaturas")
 def list_candidaturas(db: Session = Depends(get_db), limit: int = 10, offset:int=0):
-    return crud.get_candidaturas(db)
+    registros = crud.get_candidaturas(db)
+    if registros is None:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+
+    return[
+     schemas.CandidaturaInfo(
+        id_candidatura=row[0],
+        id_votacao=row[1],
+        id_user=row[2],
+        detalhes=row[3],
+        nome_completo=row[4],
+        titulo=row[5]
+        )
+        for row in registros  
+    ]
 
 @app.get("/candidaturas/aprovadas")
 def list_candidaturas_aprovadas(db: Session = Depends(get_db), limit: int = 10, offset:int=0):
-    return crud.get_candidaturas_aprovadas(db)
+    registros = crud.get_candidaturas_aprovadas(db)
+    print(f"\n\n\n\n\n\n\n\n\nLEN REGISTROS:{len(registros)}\n\n\n\n\n\n\n")
+    if registros is None:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
 
+    return[
+     schemas.CandidaturaInfo(
+        id_candidatura=row[0],
+        id_votacao=row[1],
+        id_user=row[2],
+        detalhes=row[3],
+        nome_completo=row[4],
+        titulo=row[5]
+        )
+        for row in registros  
+    ]
 @app.get("/candidaturas/pendentes")
 def list_candidaturas_pendentes(db: Session = Depends(get_db), limit: int = 10, offset:int=0):
-    return crud.get_candidaturas_pendentes(db)
+    registros = crud.get_candidaturas_pendentes(db)
+    print(f"\n\n\n\n\n\n\n\n\nLEN REGISTROS:{len(registros)}\n\n\n\n\n\n\n")
+    if registros is None:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+
+    return[
+     schemas.CandidaturaInfo(
+        id_candidatura=row[0],
+        id_votacao=row[1],
+        id_user=row[2],
+        detalhes=row[3],
+        nome_completo=row[4],
+        titulo=row[5]
+        )
+        for row in registros  
+    ]
 
 @app.get("/candidaturas/recusadas")
 def list_candidaturas_recusadas(db: Session = Depends(get_db), limit: int = 10, offset:int=0):
-    return crud.get_candidaturas_recusadas(db)
+    registros = crud.get_candidaturas_recusadas(db)
+    if registros is None:
+        raise HTTPException(status_code=404, detail="Candidatura não encontrada")
+
+    return[
+     schemas.CandidaturaInfo(
+        id_candidatura=row[0],
+        id_votacao=row[1],
+        id_user=row[2],
+        detalhes=row[3],
+        nome_completo=row[4],
+        titulo=row[5]
+        )
+        for row in registros  
+    ]
 
 @app.get("/opcoes")
 def opcoes_list(db: Session = Depends(get_db), limit: int = 10, offset:int=0):
