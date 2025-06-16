@@ -11,11 +11,14 @@ from app.token import criar_token_acesso
 
 def atualizar_status_votacoes_expiradas(db):
     agora = datetime.utcnow()
-    votacoes = db.query(models.Votacao).filter(models.Votacao.status == "aberta", models.Votacao.data_fim < agora).all()
+    try:
+        votacoes = db.query(models.Votacao).filter(models.Votacao.status == "aberta", models.Votacao.data_fim < agora).all()
 
-    for votacao in votacoes:
-        votacao.status = "fechada"
-    db.commit()
+        for votacao in votacoes:
+            votacao.status = "fechada"
+        db.commit()
+    except:
+        print("Nenhum registro atualizado")
 
 
 def create_user_with_login(db: Session, user_data: schemas.UserCreate, senha: str):
@@ -220,6 +223,10 @@ def criar_voto(db: Session, voto: schemas.VotoCreate):
 
 
 
+def resetar_votacao(db:Session, id_votacao):
+    result = db.query(models.Voto).filter(id_votacao == models.Voto.id_votacao).delete()
+    db.commit()
+    return result
 
 
 

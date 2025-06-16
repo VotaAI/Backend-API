@@ -7,6 +7,7 @@ from app.auth import get_current_user, admin_required
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter
 from typing import List
+from fastapi.exceptions import HTTPException
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -43,10 +44,14 @@ def list_votacao_id(db: Session = Depends(get_db), id_votacao=int):
 @app.get("/votacoes/{id_votacao}/votos")
 def list_votacao_votos(db: Session = Depends(get_db), id_votacao=int):
     resultados = crud.get_votos_votacao(db, id_votacao)
-    return [
-        {"id_opcao": id_opcao, "total_votos": total}
-        for id_opcao, total in resultados
-    ]
+    try:
+        return [
+            {"id_opcao": id_opcao, "total_votos": total}
+            for id_opcao, total in resultados
+        ]
+    except:
+        return resultados["msg"]
+        
 
 @app.get("/votacoes/{id_votacao}/opcoes")
 def list_votacao_opcoes(db: Session = Depends(get_db), id_votacao=int):
@@ -159,11 +164,14 @@ def criar_voto(voto: schemas.VotoCreate, db: Session = Depends(get_db)):
 @app.post("/login/")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     dados = crud.login_user(db, form_data.username, form_data.password)
-    return {
-        "access_token" : dados["access_token"],
-        "token_type" : dados["token_type"],
-        "user" : dados["user"],
-    }
+    try:
+        return {
+            "access_token" : dados["access_token"],
+            "token_type" : dados["token_type"],
+            "user" : dados["user"],
+        }
+    except:
+        return {"msg": "Login não encontrado"}
 
 # === ROTAS PUT ===
 
@@ -202,6 +210,15 @@ def deletar_votacao(votacao_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"mensagem": f'Votação "{votacao.titulo}" foi deletada com sucesso.'}
+
+@admin_router.delete("/votacoes/{votacao_id}/reset")
+def resetar_votacao(db: Session = Depends(get_db), votacao_id=int):
+    try:
+        res = crud.resetar_votacao(db, votacao_id)
+        return {"msg": f"{res} Votos deletados"}
+    except:
+        return{"msg": "Nenhum voto foi encontrado"}
+    
 
 
 
