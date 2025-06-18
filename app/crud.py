@@ -214,6 +214,16 @@ def criar_opcao(db: Session, opcao: schemas.OpcaoCreate):
 
 def criar_voto(db: Session, voto: schemas.VotoCreate):
     novo = models.Voto(**voto.model_dump())
+    print(f"\n\n\n\n\n{novo}\n\n\n\n\n")
+    try:
+        id_user = novo.id_user
+        id_votacao = novo.id_votacao
+        q = db.query(models.Voto).filter((models.Voto.id_user == id_user) & (models.Voto.id_votacao == id_votacao)).first()
+        if q:
+            msg = {"msg": "Você já votou nessa votação; Apenas um voto por votação"}
+            return msg
+    except Exception as e:
+        return {"msg": "Erro ao registrar votação"}
     db.add(novo)
     db.commit()
     db.refresh(novo)
